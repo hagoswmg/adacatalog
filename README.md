@@ -1,6 +1,6 @@
 # Getting Started
 
-Clone this project, then import to your favourite IDE. Edit `application.properties` file and modify configuration parameters as needed. At the very list, you will need to provide database connection parameters.
+Clone this project, then import to your favourite IDE. Edit `application.properties` file and modify configuration parameters as needed. At the very least, you will need to provide database connection parameters.
 
 You can run the project either using [spring cli](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-cli.html) or by running the main application. To use spring cli, go to the project base directory and get command prompt, then type the following command `mvn spring-boot: run`
 
@@ -38,7 +38,7 @@ Versioning is used for future upgrade as well as backward compatibility. For exa
        "name": "Name of Set",
        "company": "WMG",
        "comments": "A beautiful set",
-       "payload" : {"JSON Array from the selected set"}
+       "payload" : "JSON Array from the selected set"
    }
     ```
    - Response Code: 201 - Created
