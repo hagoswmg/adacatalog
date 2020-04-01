@@ -1,7 +1,7 @@
 package com.wmg.adacatalog.controller;
 
 import com.wmg.adacatalog.service.CatalogService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wmg.adacatalog.service.OpenplayProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,30 +12,40 @@ import static com.wmg.adacatalog.Constants.*;
 @RestController
 public class CatalogController {
 
-    @Autowired
     private CatalogService catalogService;
 
+    private OpenplayProductService openplayProductService;
+
+    public CatalogController(CatalogService catalogService, OpenplayProductService openplayProductService) {
+        this.catalogService = catalogService;
+        this.openplayProductService = openplayProductService;
+    }
+
     /**
-     * @param type - the type to search
+     * @param type  - the type to search (GPID/ALL/MarketingLabel etc)
+     * @param value - (optional) the value for type (eg GPID = 1234, MarketingLabel = WM US, etc)
      * @return a collection of catalog records for a given search by type
      */
     @GetMapping(ADACATALOG)
-    public ResponseEntity<?> getRecentSet(@RequestParam(defaultValue = "EntryPage") String type) {
+    public ResponseEntity<?> getRecentSet(@RequestParam(defaultValue = "EntryPage")
+                                                  String type, @RequestParam(required = false) String value) {
         if (type.equalsIgnoreCase(ENTRY_PAGE)) {
             // collection of recent list (entry page)
-            return ResponseEntity.ok(catalogService.getRecentEntrySet());
+            return ResponseEntity.ok(openplayProductService.getEntryPage());
         }
 
         if (type.equalsIgnoreCase(ALL)) {
-            return ResponseEntity.ok("Success - Search result for all");
+            // ALL
+            return ResponseEntity.ok(catalogService.getAll());
+
         } else if (type.equalsIgnoreCase(GPID)) {
-            return ResponseEntity.ok("Success - Search result for GPID");
-        } else if (type.equalsIgnoreCase(MAJOR_LABEL)) {
-            return ResponseEntity.ok("Success - Search result for MajorLabel");
-        } else if (type.equalsIgnoreCase(MARKETING_LABEL)) {
-            return ResponseEntity.ok("Success - Search result for MarketingLabel");
-        } else if (type.equalsIgnoreCase(PRESENTATION_LABEL)) {
-            return ResponseEntity.ok("Success - Search result for PresentationLabel");
+            // GPID
+            return ResponseEntity.ok(catalogService.getByGpid(value));
+        } else if (type.equalsIgnoreCase(WEA_LABEL) || type.equalsIgnoreCase(MARKETING_LABEL)
+                || type.equalsIgnoreCase(PRESENTATION_LABEL)) {
+            // Wea Label or Marketing Label or Presentation Label
+            return ResponseEntity.ok(catalogService.getByLabel(type, value));
+
         } else if (type.equalsIgnoreCase(UPLOAD)) {
             return ResponseEntity.ok("Success - Search result for Upload");
         } else {
