@@ -16,18 +16,23 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Catalog> getAll() {
-        return catalogRepository.findAll();
+    public List<Catalog> getAll(String input) {
+        return catalogRepository.findAll(input);
     }
 
     @Override
-    public List<Catalog> getByGpid(String gpid) {
-        return catalogRepository.findByGpid(gpid);
+    public List<Catalog> getByGpid(List<String> gpidList) {
+        return catalogRepository.findByGpid(gpidList);
     }
 
     @Override
     public List<Catalog> getByLabel(String type, String label) {
         return catalogRepository.findByLabel(type, label);
+    }
+
+    @Override
+    public List<String> getBySetId(String setId) {
+        return catalogRepository.findBySetId(setId);
     }
 
 }

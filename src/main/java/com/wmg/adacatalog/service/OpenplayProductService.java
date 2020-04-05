@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface OpenplayProductService {
     List<OpenplayProduct> getEntryPage();
+
+    Long getNextSeriesId();
+
+    OpenplayProduct save(OpenplayProduct openplayProduct);
 }

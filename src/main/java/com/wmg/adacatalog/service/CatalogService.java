@@ -6,10 +6,11 @@ import java.util.List;
 
 public interface CatalogService {
 
-    List<Catalog> getAll();
+    List<Catalog> getAll(String input);
 
-    List<Catalog> getByGpid(String gpid);
+    List<Catalog> getByGpid(List<String> gpidList);
 
     List<Catalog> getByLabel(String type, String label);
 
+    List<String> getBySetId(String setId);
 }

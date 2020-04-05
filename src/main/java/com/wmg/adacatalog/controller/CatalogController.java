@@ -1,15 +1,23 @@
 package com.wmg.adacatalog.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wmg.adacatalog.Utils;
+import com.wmg.adacatalog.model.ErrorMessage;
 import com.wmg.adacatalog.service.CatalogService;
 import com.wmg.adacatalog.service.OpenplayProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.wmg.adacatalog.Constants.*;
 
 @RestController
+@Slf4j
 public class CatalogController {
 
     private CatalogService catalogService;
@@ -22,52 +30,72 @@ public class CatalogController {
     }
 
     /**
-     * @param type  - the type to search (GPID/ALL/MarketingLabel etc)
-     * @param value - (optional) the value for type (eg GPID = 1234, MarketingLabel = WM US, etc)
-     * @return a collection of catalog records for a given search by type
+     * @return a collection of recently saved set
      */
     @GetMapping(ADACATALOG)
-    public ResponseEntity<?> getRecentSet(@RequestParam(defaultValue = "EntryPage")
-                                                  String type, @RequestParam(required = false) String value) {
-        if (type.equalsIgnoreCase(ENTRY_PAGE)) {
-            // collection of recent list (entry page)
-            return ResponseEntity.ok(openplayProductService.getEntryPage());
+    public ResponseEntity<?> getEntryPage() {
+        log.debug("Entered ADA Catalog Entry Page.");
+        return ResponseEntity.ok(openplayProductService.getEntryPage());
+    }
+
+    /**
+     * @param type  - the type to search (GPID search or Label search etc...)
+     * @param value - the value for type (eg GPID = 1234, MarketingLabel = WM US, etc)
+     * @return - a collection of catalog records for a given search by type
+     */
+    @GetMapping(ADACATALOG_SEARCH)
+    public ResponseEntity<?> search(@RequestParam String type, @RequestParam String value) {
+        log.debug("Search request for type={} and value=\"{}\".", type, value);
+
+        if (Utils.trimString(value) == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error", "Missing search critria");
+            log.error(errorMessage.toString());
+            return ResponseEntity.badRequest().body(errorMessage);
         }
 
         if (type.equalsIgnoreCase(ALL)) {
-            // ALL
-            return ResponseEntity.ok(catalogService.getAll());
-
+            return ResponseEntity.ok(catalogService.getAll(Utils.trimString(value)));
         } else if (type.equalsIgnoreCase(GPID)) {
-            // GPID
-            return ResponseEntity.ok(catalogService.getByGpid(value));
-        } else if (type.equalsIgnoreCase(WEA_LABEL) || type.equalsIgnoreCase(MARKETING_LABEL)
-                || type.equalsIgnoreCase(PRESENTATION_LABEL)) {
-            // Wea Label or Marketing Label or Presentation Label
+            return ResponseEntity.ok(catalogService.getByGpid(Utils.getCleansedString(value, ",")));
+        } else { // Wea Label or Marketing Label or Presentation Label
             return ResponseEntity.ok(catalogService.getByLabel(type, value));
-
-        } else if (type.equalsIgnoreCase(UPLOAD)) {
-            return ResponseEntity.ok("Success - Search result for Upload");
-        } else {
-            return ResponseEntity.ok("Failure - Invalid Search Critria");
         }
     }
 
     /**
-     * @param confirmationCode - the confirmation code to look details for
-     * @return - The drill down details info for a given entry by confirmation code
+     * @param setId - the confirmation code to look details for
+     * @return - The drill down details info for a given entry by set id
      */
     @GetMapping(ADACATALOG_CONFIRMATION_CODE)
-    public ResponseEntity<?> getDetailsByConfirmationCode(@PathParam("confirmationCode") String confirmationCode) {
-        return ResponseEntity.ok("Success - Details by confirmation code");
+    public ResponseEntity<?> getDetailsByConfirmationCode(@PathVariable("setId") String setId) {
+        log.debug("Drill down search for setId={}", setId);
+        List<String> gpidList = catalogService.getBySetId(setId);
+        return ResponseEntity.ok(catalogService.getByGpid(gpidList));
     }
 
     /**
-     * @param jsonPayload - the json payload
-     * @return - confirmation number for the saved item
+     * Upload search
+     * @param payload - a json array of GIPDs
+     * @return a collection for he given GIPDs
      */
-    @PostMapping(value = ADACATALOG, consumes = "application/json", produces = "application/json")
-    public String createSet(@RequestBody String jsonPayload) {
-        return "confirmation code";
+    @PostMapping(ADACATALOG_SEARCH)
+    public ResponseEntity<?> uploadSearch(@RequestBody String payload) {
+        log.debug("Upload search with payload: {}", Utils.trimAndSqueezeWs(payload));
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String[] gpids = mapper.readValue(payload, String[].class);
+            List<String> uniqueGpidList = Arrays.stream(gpids)
+                    .filter(x -> Utils.trimString(x) != null)
+                    .map(Utils::trimString)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            log.debug("Unique GPID list: {}", uniqueGpidList);
+            return ResponseEntity.ok(catalogService.getByGpid(uniqueGpidList));
+
+        } catch (JsonProcessingException e) {
+            log.error("JsonProcessingException - parse error - details {} ", e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage("Error", "Bad input data"));
+        }
     }
 }

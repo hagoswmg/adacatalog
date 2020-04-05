@@ -18,7 +18,6 @@ public class OpenplayProductServiceImpl implements OpenplayProductService {
 
     /**
      * Populates the entry page of ada to openplay backfill request
-     *
      * @return a sub list of recently created play set
      */
     @Override
@@ -27,5 +26,15 @@ public class OpenplayProductServiceImpl implements OpenplayProductService {
         openplayProductRepository.findTop10ByOrderByLastUpdateDateDesc().forEach(list::add);
 
         return list;
+    }
+
+    @Override
+    public Long getNextSeriesId() {
+        return openplayProductRepository.findNextSeriesId();
+    }
+
+    @Override
+    public OpenplayProduct save(OpenplayProduct openplayProduct) {
+        return openplayProductRepository.save(openplayProduct);
     }
 }
