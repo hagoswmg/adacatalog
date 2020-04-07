@@ -11,13 +11,12 @@
     <groupId>com.wmg</groupId>
     <artifactId>adacatalog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ADA Catalog</name>
+    <name>ADA_Catalog</name>
     <description>Template project for ADA Catalog</description>
 
     <properties>
         <java.version>1.8</java.version>
         <io.springfox.version>3.0.0-SNAPSHOT</io.springfox.version>
-        <slf4j.version>1.7.30</slf4j.version>
     </properties>
 
     <dependencies>
@@ -44,12 +43,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- Swagger documentation -->
         <dependency>

@@ -5,7 +5,7 @@ public class Constants {
     // routes
     public static final String ADACATALOG = "/v1/adacatalog";
     public static final String ADACATALOG_SEARCH = "/v1/adacatalog/search";
-    public static final String ADACATALOG_CONFIRMATION_CODE = "/v1/adacatalog/{setId}";
+    public static final String ADACATALOG_WITH_SETID_PATH = "/v1/adacatalog/{setId}";
 
     // constant literals
     public static final String ENTRY_PAGE = "EntryPage";

@@ -66,7 +66,7 @@ public class CatalogController {
      * @param setId - the confirmation code to look details for
      * @return - The drill down details info for a given entry by set id
      */
-    @GetMapping(ADACATALOG_CONFIRMATION_CODE)
+    @GetMapping(ADACATALOG_WITH_SETID_PATH)
     public ResponseEntity<?> getDetailsByConfirmationCode(@PathVariable("setId") String setId) {
         log.debug("Drill down search for setId={}", setId);
         List<String> gpidList = catalogService.getBySetId(setId);

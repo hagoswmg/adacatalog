@@ -24,9 +24,6 @@ public class OpenplayDetail {
     @Column(name = "IDENTIFIER")
     private String identifier;
 
-    @Column(name = "IDENTIFIER_TYPE_CODE")
-    private String identifierTypeCode;
-
     @Column(name = "DEAL_SENT")
     private String dealSent;
 

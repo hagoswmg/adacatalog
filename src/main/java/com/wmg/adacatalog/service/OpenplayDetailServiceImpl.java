@@ -30,4 +30,14 @@ public class OpenplayDetailServiceImpl implements OpenplayDetailService {
         return openplayDetailRepository.findNextSeriesId();
     }
 
+    @Override
+    public List<OpenplayDetail> getBySetId(long setId) {
+        return openplayDetailRepository.findBySetId(setId);
+    }
+
+    @Override
+    public void deleteByDetailId(long detailId) {
+        openplayDetailRepository.deleteById(detailId);
+    }
+
 }

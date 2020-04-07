@@ -10,4 +10,8 @@ public interface OpenplayDetailService {
     void saveAll(List<OpenplayDetail> detailsList);
 
     Long getNextSeriesId();
+
+    List<OpenplayDetail> getBySetId(long setId);
+
+    void deleteByDetailId(long detailId);
 }

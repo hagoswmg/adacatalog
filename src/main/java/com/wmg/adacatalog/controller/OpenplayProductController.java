@@ -12,19 +12,14 @@ import com.wmg.adacatalog.service.OpenplayDetailService;
 import com.wmg.adacatalog.service.OpenplayProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static com.wmg.adacatalog.Constants.ADACATALOG;
+import static com.wmg.adacatalog.Constants.*;
 
 @RestController
 @Slf4j
@@ -73,18 +68,39 @@ public class OpenplayProductController {
         }
     }
 
+    @DeleteMapping(value = ADACATALOG_WITH_SETID_PATH)
+    public ResponseEntity<?> deleteSet(@PathVariable("setId") long setId) {
+        log.debug("DELETE request for setId={}", setId);
+        List<OpenplayDetail> openplayDetailsList = openplayDetailService.getBySetId(setId);
+
+        for (OpenplayDetail openplayDetail : openplayDetailsList) {
+            openplayDetailService.deleteByDetailId(openplayDetail.getDetailId());
+        }
+
+        openplayProductService.deleteBySetId(setId);
+        Map<String, String> map = new HashMap<>();
+        map.put("SetId", String.valueOf(setId));
+        map.put("Status" , "Deleted - including all associated details");
+
+        return ResponseEntity.ok(map);
+    }
+
+    @GetMapping(value = ADACATALOG_SEARCH + "/{setId}")
+    public ResponseEntity<?> getBySetId(@PathVariable("setId") long setId) {
+        log.debug("GET request for setId={}", setId);
+        return ResponseEntity.ok(openplayProductService.getBySetId(setId));
+    }
+
     private void saveOpenplayDetail(JsonNode arrayNode, Long setId) {
         List<OpenplayDetail> detailsList = new ArrayList<>();
         for (JsonNode next : arrayNode) {
             Map<String, JsonNode> stringJsonNodeMap = Utils.processJsonNode(next);
             String identifier = Utils.getAttribute(stringJsonNodeMap, "identifier");
-            String identifier_type_code = Utils.getAttribute(stringJsonNodeMap, "identifier_type_code");
             OpenplayDetail openplayDetail = new OpenplayDetail();
 
             openplayDetail.setDetailId(openplayDetailService.getNextSeriesId());
             openplayDetail.setSetId(setId);
             openplayDetail.setIdentifier(identifier);
-            openplayDetail.setIdentifierTypeCode(identifier_type_code);
             openplayDetail.setDealSent(Constants.SENT_STATUS);
             openplayDetail.setPmiSent(Constants.SENT_STATUS);
             openplayDetail.setCoverArtSent(Constants.SENT_STATUS);

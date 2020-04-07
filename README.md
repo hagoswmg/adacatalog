@@ -21,28 +21,59 @@ Versioning is used for future upgrade as well as backward compatibility. For exa
     
 3. Search Page (__GET__ request from catalog by type)
     - URI:
-        - http://localhost:8080/v1/adacatalog?type=All
-        - http://localhost:8080/v1/adacatalog?type=GPID
-        - http://localhost:8080/v1/adacatalog?type=MajorLabel
-        - http://localhost:8080/v1/adacatalog?type=MarketingLabel
-        - http://localhost:8080/v1/adacatalog?type=PresentationLabel
-        - http://localhost:8080/v1/adacatalog?type=Upload
+        - http://localhost:8080/v1/adacatalog/search?type=all&value=Warner
+        - http://localhost:8080/v1/adacatalog/search?type=GPID&value=054391946607,A10302B00002105136,603497175369,A10302B0000096277V
+        - http://localhost:8080/v1/adacatalog/search?type=WeaLabel&value=LAT
+        - http://localhost:8080/v1/adacatalog/search?type=MarketingLabel&value=Reprise
+        - http://localhost:8080/v1/adacatalog/search?type=PresentationLabel&value=Warner Records
     - Response Status Code: 200 
     - Response Content: A collection of recent list in JSON format
-    
-4. Create Set (__POST__ request)
+
+4. Search by Upload(__POST__ request)
+   - URI: http://localhost:8080/v1/adacatalog/search
+   - Body:
+   ```json
+       [
+         "054391946607",
+         "A10302B00002105136",
+         "603497175369   ",
+         "A10302B0000096277V"
+       ]
+   ```
+   - Response Status Code: 200 
+   - Response Content: A collection of recent list in JSON format
+
+5. Create Set (__POST__ request)
     - URI: http://localhost:8080/v1/adacatalog
     - Body 
     ```json
-   {
-       "name": "Name of Set",
-       "company": "WMG",
-       "comments": "A beautiful set",
-       "payload" : "JSON Array from the selected set"
-   }
+        {
+          "setName": "Regea",
+          "createdBy": "GH",
+          "company": "WMG",
+          "comments": "Bob Marley Collection",
+          "payload": [
+            {"identifier" : "054391567567", "identifier_type_code" : "GPID"},
+            {"identifier" : "022924496561", "identifier_type_code" : "GPID"},
+            {"identifier" : "022924496523", "identifier_type_code" : "GPID"},
+            {"identifier" : "016861200435", "identifier_type_code" : "GPID"},
+            {"identifier" : "075679953728", "identifier_type_code" : "GPID"}
+          ]
+        }
     ```
    - Response Code: 201 - Created
    - Response Content : Response Entity with Confirmation ID
+
+6. Delete Set (__DELETE_ request)
+    - URI: http://localhost:8080/v1/adacatalog/135
+    - Response Status Code: 200 Ok
+    - Response Body
+    ```json
+        {
+            "Status": "Deleted - including all associated details",
+            "SetId": "135"
+        }
+    ```    
 
 ### Reference Documentation
 For further reference, please consider the following sections:

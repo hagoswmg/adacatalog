@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OpenplayProductServiceImpl implements OpenplayProductService {
@@ -36,5 +37,15 @@ public class OpenplayProductServiceImpl implements OpenplayProductService {
     @Override
     public OpenplayProduct save(OpenplayProduct openplayProduct) {
         return openplayProductRepository.save(openplayProduct);
+    }
+
+    @Override
+    public void deleteBySetId(Long setId) {
+        openplayProductRepository.deleteById(setId);
+    }
+
+    @Override
+    public Optional<OpenplayProduct> getBySetId(long setId) {
+        return openplayProductRepository.findById(setId);
     }
 }
