@@ -12,6 +12,7 @@
     <artifactId>adacatalog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ADA_Catalog</name>
+    <packaging>war</packaging>
     <description>Template project for ADA Catalog</description>
 
     <properties>

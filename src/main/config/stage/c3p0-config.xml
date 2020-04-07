@@ -1,0 +1,18 @@
+<c3p0-config>
+	<named-config name="DMD">
+		<property name="driverClass">oracle.jdbc.driver.OracleDriver</property>
+		<property name="jdbcUrl">jdbc:oracle:thin:@dmddb.staging.wmg.com:1521:DMDDEV</property>
+		<property name="user">DMD</property>
+		<property name="password">DMD</property>
+		<property name="initialPoolSize">6</property>
+		<property name="maxPoolSize">20</property>
+		<property name="minPoolSize">6</property>
+		<property name="maxIdleTime">180</property> <!-- 3 minutes -->
+		<property name="maxIdleTimeExcessConnections">90</property> <!-- 1.5 minutes - time out connections higher than minPoolSize more often -->
+		<property name="idleConnectionTestPeriod">200</property><!-- test connection every 1 minute -->
+		<property name="preferredTestQuery">SELECT 1 FROM DUAL</property>
+		<property name="maxConnectionAge">43200</property><!-- drop connection when it is older than 12 hours -->
+<!-- 		<property name="maxStatementsPerConnection">10</property>http://www.mchange.com/projects/c3p0/#maxStatements -->
+		<!-- reduce number of cached connections down to 10 to avoid idle connections -->
+	</named-config>
+</c3p0-config>

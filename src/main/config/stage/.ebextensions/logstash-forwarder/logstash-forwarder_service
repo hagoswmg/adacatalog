@@ -1,0 +1,53 @@
+#!/bin/bash
+# chkconfig: 2345 52 50
+# description: NMS logstash beanstalk forwarder service unix
+
+# Source function library.
+. /etc/init.d/functions
+
+start() {
+
+    #description "ABER logstash runner"
+    #author "ABER"
+    #pre-start script
+        echo "[`date`] starting logstash forwarder" >> /var/log/logstash_service.log &
+    #end script
+
+    #change working directory for ".forwarder" offset file
+    cd /var/run/
+    exec /opt/logstash-forwarder/logstash-forwarder_0.4.0.bin -config /opt/logstash-forwarder/logstash-forwarder.conf >> /var/log/logstash_service.log &
+
+}
+
+stop() {
+    # code to stop app comes here
+    # example: killproc program_name
+
+    killproc logstash-forwarder_0.4.0.bin
+}
+
+status() {
+    echo "Process (ps): "
+    ps -ef|grep logstash-forwarder_0.4.0.bin
+}
+
+case "$1" in
+    start)
+       start
+       ;;
+    stop)
+       stop
+       ;;
+    restart)
+       stop
+       start
+       ;;
+    status)
+       # code to check status of app comes here
+       # example: status program_name
+       ;;
+    *)
+       echo "Usage: $0 {start|stop|status|restart}"
+esac
+
+exit 0
